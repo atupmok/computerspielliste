@@ -1,0 +1,3 @@
+class Ausnahme(Exception):
+    pass
+
