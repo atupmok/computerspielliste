@@ -3,9 +3,14 @@ from Ausnahme import Ausnahme
 import traceback, logging, sqlite3
 from datetime import datetime
 from operator import attrgetter
+import pathlib
 
 logging.basicConfig(filename="computerspiele.log")
-db_pfad = 'files/computerspielliste.db'
+
+print("test")
+# print(pathlib.Path(__file__).parent.absolute() + "/files/computerspielliste.db)
+
+db_pfad = pathlib.Path(__file__).parent.absolute()  + 'files/computerspielliste.db'
 
 def insert_spiel(spiel: Spiel):
     try:
