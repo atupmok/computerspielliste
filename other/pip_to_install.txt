@@ -1,0 +1,8 @@
+pip install crawler
+pip install soupsieve
+pip install traceback
+pip install logging
+pip install sqlite3
+pip install pandas
+pip install bs4
+pip install requests (nur linux?)

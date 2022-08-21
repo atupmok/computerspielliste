@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Computerspielliste</title>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <style>
+        span.meldung_erfolg {
+            background-color: darkgreen;
+            color: white;
+        }
+
+        span.meldung_fehlschlag {
+            background-color: darkred;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <a href="/">Liste</a>
+    <form method="POST">
+        <label for="txt_itad_id">ITAD-ID: </label><input type="text" name="txt_itad_id" id="txt_itad_id"><br>
+        <label for="txt_plattform_id">Plattform-ID: </label><input type="text" name="txt_plattform_id" id="txt_plattform_id"><br>
+        <label for="ddl_plattform">Plattform: </label><select name="ddl_plattform" id="ddl_plattform">
+            <option value="Steam">Steam</option>
+            <option value="Epic">Epic</option>
+        </select><br>
+        <label for="txt_bild_url">Bild-URL: </label><input type="text" name="txt_bild_url" id="txt_bild_url" size="100"><br>
+        <label for="ddl_spieler">Spieler: </label>
+        <select name="ddl_spieler" id="ddl_spieler">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="2+">2+</option>
+        </select><br>
+        <label for="chb_in_besitz">In Besitz: </label><input type="checkbox" name="chb_in_besitz" id="chb_in_besitz" value="in_besitz"><br>
+        <label for="txt_info">Info: </label><textarea name="txt_info" id="txt_info" rows="3"></textarea><br>
+        <input type="submit" name="btn_hinzufuegen" value="Hinzufügen"><br>
+
+        {% if meldung: %}
+        <span class="{% if gut_gelaufen: %}meldung_erfolg{% else: %}meldung_fehlschlag{% endif %}">{{ meldung }}</span>
+        {% endif %}
+    </form>
+</body>
+</html>

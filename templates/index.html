@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Computerspielliste</title>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <style>
+        body {
+            font-family: Open Sans;
+            font-weight: bold;
+            background-color: black;
+            font-size: 0.9em;
+        }
+
+        h1,
+        h2 {
+            color: white;
+        }
+
+        h1 {
+            font-size: 5em;
+            text-align: left;
+        }
+
+        span {
+            display: inline-block;
+            padding: 0.3em;
+        }
+
+        p {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+        }
+
+        form {
+            color: whitesmoke;
+            border: 0.1em whitesmoke solid;
+            padding: 0.2em;
+            max-width: min-content;
+            white-space: nowrap;
+        }
+
+        span.in_besitz {
+            background-color: darkgreen;
+            color: whitesmoke;
+
+        }
+
+        span.nicht_in_besitz {
+            background-color: darkred;
+            color: whitesmoke;
+        }
+
+        span.hat_demo {
+            background-color: pink;
+            color: black;
+        }
+
+        span.keine_demo {
+            background-color: darkorchid;
+            color: whitesmoke;
+        }
+
+        span.genre {
+            background-color: lightblue;
+        }
+
+        span.mehrspielermodus {
+            background-color: lightgreen;
+        }
+
+        span.tag {
+            background-color: lightseagreen;
+        }
+
+        span.hinzugefuegt_am {
+            background-color: whitesmoke;
+        }
+
+        span.info {
+            background-color: thistle;
+        }
+
+        span.steam {
+            background-color: black;
+            color: white;
+            text-decoration: underline;
+        }
+
+        span.epic {
+            background-color: lightgray;
+            color: black;
+            text-decoration: underline;
+        }
+
+        span.itad {
+            background-color: #0B4267;
+            color: white;
+        }
+
+        span.itad a {
+            color: white;
+        }
+
+        span.spieler {
+            background-color: lightgray;
+        }
+
+        span.info {
+            background-color: lightgray;
+        }
+
+        span.meldung_erfolg {
+            background-color: darkgreen;
+            color: white;
+        }
+
+        span.meldung_fehlschlag {
+            background-color: darkred;
+            color: white;
+        }
+
+        img.spielablauf {
+            height: 400px;
+            max-width: 700px;
+        }
+
+        div.ueberschrift {
+            width: 100%;
+        }
+
+        div.zeile {
+            border: 0.2em black solid;
+            background-color: grey;
+            overflow: hidden;
+        }
+
+        div.erste_spalte {
+            padding: 5px;
+            width: 470px;
+            height: fit-content;
+            float: left;
+        }
+
+        div.zweite_spalte {
+            /* width: 700px; */
+            padding: 6px
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Computerspielliste</h1>
+    <div style="text-align: right;">
+        <form method="POST">
+            <input type="submit" name="btn_preise_aktualisieren" value="ITAD-Preise aktualisieren"> (Geduld ist eine
+            Tugend)<br>
+            (letzte Aktualisierung: {{ letzte_preis_aktualisierung }})<br>
+            {% if meldung: %}
+            <span class="{% if gut_gelaufen: %}meldung_erfolg{% else: %}meldung_fehlschlag{% endif %}">{{ meldung
+                }}</span>
+            {% endif %}
+        </form>
+        <!-- <div style="margin-top: 1em"> -->
+        <form method="GET" style="margin-top: 1em;">
+            <p>
+                Filter:
+                <input type="checkbox" name="chb_in_besitz" value="in_besitz" {% if in_besitz %}checked="checked" {%
+                    endif %}><label for="chb_in_besitz">In Besitz</label>
+                <input type="checkbox" name="chb_spieler_1" value="True" {% if spieler["1"] %}checked="checked" {% endif
+                    %}><label for="chb_spieler_1">👤</label>
+                <input type="checkbox" name="chb_spieler_2" value="True" {% if spieler["2"] %}checked="checked" {% endif
+                    %}><label for="chb_spieler_2">👤👤</label>
+                <input type="checkbox" name="chb_spieler_2_plus" value="True" {% if spieler["2_plus"]
+                    %}checked="checked" {% endif %}><label for="chb_spieler_2_plus">👤👤+</label>
+            </p>
+            <p>
+                Sortierung:
+                <select name="ddl_sortierung" id="ddl_sortierung">
+                    <option value="spieler" {% if sortiert_nach=="spieler" : %} selected="selected" {% endif %}>
+                        SpielerAnzahl</option>
+                    <option value="name" {% if sortiert_nach=="name" : %} selected="selected" {% endif %}>Name
+                    </option>
+                    <option value="kosten_mit_demos" {% if sortiert_nach=="kosten_mit_demos" : %} selected="selected" {%
+                        endif %}>Kosten zum Spielen (inkl. Demos)</option>
+                    <option value="kosten_ohne_demos" {% if sortiert_nach=="kosten_ohne_demos" : %} selected="selected"
+                        {% endif %}>Kosten zum Spielen (exkl. Demos)</option>
+                    <option value="plattform" {% if sortiert_nach=="plattform" : %} selected="selected" {% endif %}>
+                        Plattform</option>
+                    <option value="hinzugefuegt_am" {% if sortiert_nach=="hinzugefuegt_am" : %} selected="selected" {%
+                        endif %}>Hinzugefügt am</option>
+                </select>
+            </p>
+            <label for="chb_aufsteigend">aufsteigend: </label><input type="checkbox" name="chb_aufsteigend"
+                id="chb_aufsteigend" value="aufsteigend" {% if aufsteigend or aufsteigend==None: %} checked="checked" {%
+                endif %}>
+            <input type="submit" name="btn_filtern_und_sortieren" value="Filtern und Sortieren"> <br>
+            {% if meldung: %}
+            <span class="{% if gut_gelaufen: %}meldung_erfolg{% else: %}meldung_fehlschlag{% endif %}">{{ meldung
+                }}</span>
+            {% endif %}
+        </form>
+        <!-- </div> -->
+    </div>
+    <div>
+        {% for spiel in spiele %} 
+        <div>
+            <div class="ueberschrift">
+                <h2>{{ spiel.get_name() }}</h2>
+            </div>
+            <div class="zeile">
+                <div class="erste_spalte" style="float: left;">
+                    <p><img src="static/imgs/logo/{{ spiel.get_id_str() }}.jpg" alt=""></p>
+                    <p>
+                        {% if spiel.get_plattform() == "Steam": %}
+                        <a href="https://store.steampowered.com/app/{{ spiel.get_plattform_id() }}" target="_blank"><span
+                                class="steam">Steam</span></a>
+                        {% elif spiel.get_plattform() == "Epic": %}
+                        <a href="https://www.epicgames.com/store/en-US/p/{{ spiel.get_plattform_id() }}" target="_blank"><span
+                                class="epic">Epic</span></a>
+                        {% endif %}                    
+
+                    {% if spiel.get_in_besitz(): %}
+                    <span class="in_besitz">in Besitz</span>
+                    {% else: %}
+                    <span class="nicht_in_besitz">nicht in Besitz</span>
+                    {% endif %}
+
+                    {% if spiel.get_hat_demo(): %}
+                    <span class="hat_demo">hat Demo</span>
+                    {% else: %}
+                    <span class="keine_demo">keine Demo</span>
+                    {% endif %}
+
+                    {% if spiel.get_itad_id() != None: %}
+                    <span class="itad"><a href="https://isthereanydeal.com/game/{{ spiel.get_itad_id() }}/info/"
+                            target="_blank">ITAD</a>: {{ spiel.get_itad_preis_str() }}€</span>
+                    {% endif %}
+
+                    <span class="spieler">
+                        {% if spiel.get_spieler() == "1": %}
+                        👤
+                        {% elif spiel.get_spieler() == "2": %}
+                        👤👤
+                        {% elif spiel.get_spieler() == "2+": %}
+                        👤👤+
+                        {% endif %}
+                    </span>
+
+                    </p>
+                    <p>
+                        {% if spiel.get_mehrspielermodi() != None: %}
+                        {% for mehrspielermodus in spiel.get_mehrspielermodi() %}
+                        <span class="mehrspielermodus">{{ mehrspielermodus }}</span>
+                        {% endfor %}
+                        {% endif %}
+                    </p>
+                    <p>
+                        {% if spiel.get_genres() != None: %}
+                        {% for genre in spiel.get_genres() %}
+                        <span class="genre">{{ genre }}</span>
+                        {% endfor %}
+                        {% endif %}
+                    </p>
+                    <p>
+                        {% if spiel.get_tags() != None: %}
+                        {% for tag in spiel.get_tags() %}
+                        <span class="tag">{{ tag }}</span>
+                        {% endfor %}
+                        {% endif %}
+                    </p>
+                    <p>
+                        <span class="hinzugefuegt_am">hinzugefügt am {{ spiel.get_hinzugefuegt_am_str() }}</span>
+                    </p>
+                    {% if spiel.get_info() != None %}
+                    <p>
+                        <span class="info">Info: {{ spiel.get_info() }}</span>
+                    </p>
+                    {% endif %}
+                </div>
+                <div class="zweite_spalte">
+                    <img src="static/imgs/spielablauf/{{ spiel.get_id_str() }}.jpg" alt="" class="spielablauf">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
