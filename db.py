@@ -9,8 +9,11 @@ logging.basicConfig(filename="computerspiele.log")
 
 # print("test")
 # print(pathlib.Path(__file__).parent.absolute() + "/files/computerspielliste.db)
+db_pfad = None
+db_pfad = str(pathlib.Path(__file__).parent.absolute())  + '/files/computerspielliste.db'
 
-db_pfad = pathlib.Path(__file__).parent.absolute()  + '/files/computerspielliste.db'
+print(f"{db_pfad=}")
+
 
 def insert_spiel(spiel: Spiel):
     try:
